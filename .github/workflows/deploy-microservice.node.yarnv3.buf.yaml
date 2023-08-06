@@ -67,6 +67,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.NODEJS_VERSION }}
+          cache: 'yarn'
 
       - name: Install Yarn V3
         run: |
