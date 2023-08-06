@@ -20,24 +20,14 @@ on:
       CONTAINER_IMAGE_TAG:
         required: true
         type: string
-      PLANTON_CLOUD_ENVIRONMENT_ID:
-        required: true
-        type: string
-      PLANTON_CLOUD_ENVIRONMENT_NAME:
-        required: true
-        type: string
-      PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION:
-        required: true
-        type: string
       NODEJS_VERSION:
         required: false
         type: string
         default: 18.6
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.PLANTON_CLOUD_ENVIRONMENT_ID }}-${{ inputs.PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
