@@ -8,14 +8,6 @@ on:
       PLANTON_CLOUD_CLIENT_SECRET:
         required: true
     inputs:
-      SETUP_BUF:
-        required: false
-        default: false
-        type: 'boolean'
-      INSTALL_YARN_V3:
-        required: false
-        default: false
-        type: 'boolean'
       PLANTON_CLOUD_ARTIFACT_STORE_ID:
         required: true
         type: string
@@ -37,6 +29,10 @@ on:
       PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION:
         required: true
         type: string
+      NODEJS_VERSION:
+        required: false
+        type: string
+        default: 18.6
 
 jobs:
   build-and-deploy:
@@ -61,21 +57,19 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 18.6
+          node-version: ${{ inputs.NODEJS_VERSION }}
 
       - name: Install Yarn V3
-        if: ${{ inputs.INSTALL_YARN_V3 == true }}
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
           yarn --version
         shell: bash
 
-      - name: Setup Buf
-        if: ${{ inputs.SETUP_BUF == true }}
-        uses: plantoncloud/gha-setup-buf-for-pc-artifact-store@main
-        with:
-          planton_cloud_artifact_store_id: ${{ inputs.PLANTON_CLOUD_ARTIFACT_STORE_ID }}
+      - name: Export Buf Token
+        run: |
+          BUF_TOKEN=$(planton get ${{ inputs.PLANTON_CLOUD_ARTIFACT_STORE_ID }} -oyaml | yq e '.spec.bufToken' -)
+          echo "BUF_TOKEN=$BUF_TOKEN" >> $GITHUB_ENV
 
       - name: Build with Make
         run:  make build

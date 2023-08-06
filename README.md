@@ -1,4 +1,4 @@
-# GitHub Workflow: Build and Deploy Golang Microservice
+# GitHub Workflows for Javascript Projects
 
 This repository provides a GitHub Workflow that automates the process of building and deploying a Golang Microservice using Planton Cloud.
 
@@ -12,9 +12,9 @@ The workflow performs the following steps:
 
 4. **Login to Planton Cloud:** Uses your provided Planton Cloud credentials to authenticate your session.
 
-5. **Setup Golang:** Configures the Golang environment necessary for building the application. Uses version '1.20.0'.
+5. **Setup NodeJS:** Configures the NodeJS environment necessary for building the application.
 
-6. **Setup Git SSH:** Sets up Git SSH keys using your provided Artifact Store ID on Planton Cloud, to authenticate to your Git server.
+6. **Setup NPM Credentials:** Sets up NPM Credentials.
 
 7. **Build with Make:** Executes the Make build for your application.
 
