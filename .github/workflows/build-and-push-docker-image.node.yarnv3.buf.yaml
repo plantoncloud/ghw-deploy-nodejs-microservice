@@ -1,0 +1,83 @@
+name: build-and-deploy
+
+on:
+  workflow_call:
+    secrets:
+      PLANTON_CLOUD_CLIENT_ID:
+        required: true
+      PLANTON_CLOUD_CLIENT_SECRET:
+        required: true
+    inputs:
+      PLANTON_CLOUD_ARTIFACT_STORE_ID:
+        required: true
+        type: string
+      DOCKER_REPO_HOSTNAME:
+        required: true
+        type: string
+      CONTAINER_IMAGE_REPO:
+        required: true
+        type: string
+      CONTAINER_IMAGE_TAG:
+        required: true
+        type: string
+      PLANTON_CLOUD_ENVIRONMENT_ID:
+        required: true
+        type: string
+      PLANTON_CLOUD_ENVIRONMENT_NAME:
+        required: true
+        type: string
+      PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION:
+        required: true
+        type: string
+      NODEJS_VERSION:
+        required: false
+        type: string
+        default: 18.6
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.PLANTON_CLOUD_ENVIRONMENT_ID }}-${{ inputs.PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      - name: Install Planton CLI
+        uses: plantoncloud/gha-install-planton-cli@main
+      
+      - name: Verify Planton CLI Installation
+        run: planton version
+      
+      - name: Login to Planton Cloud
+        uses: plantoncloud/gha-planton-cli-login@main
+        with:
+          planton_cloud_client_id: ${{ secrets.PLANTON_CLOUD_CLIENT_ID }}
+          planton_cloud_client_secret: ${{ secrets.PLANTON_CLOUD_CLIENT_SECRET }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.NODEJS_VERSION }}
+
+      - name: Install Yarn V3
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          yarn --version
+        shell: bash
+
+      - name: Export Buf Token
+        run: |
+          BUF_TOKEN=$(planton get ${{ inputs.PLANTON_CLOUD_ARTIFACT_STORE_ID }} -oyaml | yq e '.spec.bufToken' -)
+          echo "BUF_TOKEN=$BUF_TOKEN" >> $GITHUB_ENV
+
+      - name: Build with Make
+        run:  make build
+
+      - name: Build & Push Docker Image
+        uses: plantoncloud/gha-build-and-push-docker-image@main
+        with:
+          planton_cloud_artifact_store_id: ${{ inputs.PLANTON_CLOUD_ARTIFACT_STORE_ID }}
+          docker_repo_hostname: ${{ inputs.DOCKER_REPO_HOSTNAME }}
+          container_image_repo: ${{ inputs.CONTAINER_IMAGE_REPO }}
+          container_image_tag: ${{ inputs.CONTAINER_IMAGE_TAG }}
