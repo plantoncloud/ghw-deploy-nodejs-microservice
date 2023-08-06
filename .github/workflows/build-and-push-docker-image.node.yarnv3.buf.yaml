@@ -23,11 +23,11 @@ on:
       NODEJS_VERSION:
         required: false
         type: string
-        default: 17.9.1
+        default: 18.6
       YARN_VERSION:
         required: false
         type: string
-        default: 3.2.3
+        default: 3.6.1
 
 jobs:
   build-and-push:
