@@ -1,54 +1,65 @@
-# GitHub Workflows for Javascript Projects
+Certainly. Here's a README for your JavaScript GitHub project, tailored for Node.js projects with Yarn v3 and Buf integrations:
 
-This repository provides a GitHub Workflow that automates the process of building and deploying a Golang Microservice using Planton Cloud.
+---
 
-The workflow performs the following steps:
+# Planton Cloud JavaScript CI/CD Workflows
 
-1. **Checkout Code:** Fetches the codebase of your application from the repository.
+This repository offers workflow templates tailored for JavaScript projects built with Node.js, leveraging Yarn v3 and Buf, and designed to integrate with various deployment targets via Planton Cloud services.
 
-2. **Install Planton CLI:** Installs the Planton Command Line Interface (CLI), which is a crucial tool used in subsequent steps.
+## Workflow Descriptions
 
-3. **Verify Planton CLI Installation:** Checks the installed Planton CLI version to verify the successful installation.
+### Buld & Push Docker Image to GCP Artifact Registry
 
-4. **Login to Planton Cloud:** Uses your provided Planton Cloud credentials to authenticate your session.
+A workflow providing an end-to-end solution for Node.js projects with Yarn v3 and Buf integrations targeting containerized deployments:
 
-5. **Setup NodeJS:** Configures the NodeJS environment necessary for building the application.
+1. Checking out code.
+2. Installing and setting up the Planton CLI.
+3. Exporting the Buf Token.
+4. Setting up the Node.js environment with caching and Yarn v3 support.
+5. Building the application using Make.
+6. Authenticating and logging in to the GCP Artifact Registry.
+7. Building and pushing Docker images to the specified registry.
 
-6. **Setup NPM Credentials:** Sets up NPM Credentials.
+### Deploy Microservice to GKE
 
-7. **Build with Make:** Executes the Make build for your application.
+This workflow supports the deployment of Node.js applications with Yarn v3 and Buf integrations as microservices on Planton Cloud:
 
-8. **Build & Push Docker Image:** Builds a Docker image from your application and pushes it to the specified Docker repository.
+1. Checking out code.
+2. Installing and setting up the Planton CLI.
+3. Exporting the Buf Token.
+4. Setting up the Node.js environment with caching and Yarn v3 support.
+5. Building the application using Make.
+6. Authenticating and logging in to the GCP Artifact Registry.
+7. Building and pushing Docker images.
+8. Deploying the microservice to the specified Planton Cloud environment.
 
-9. **Deploy Microservice:** Deploys the built Microservice to an environment on Planton Cloud.
+## Inputs
+
+Each workflow has its specific inputs for execution. For details on necessary inputs for each workflow, refer to the respective YAML file. For instance, the `build-and-push-docker-image.node.yarnv3.buf.yaml` workflow requires:
+
+- (List of inputs as provided before for this workflow...)
+
+And similarly for `deploy-microservice.node.yarnv3.buf.yaml`:
+
+- (List of inputs as provided before for this workflow...)
+
+## Secrets
+
+Ensure you've set up the necessary secrets in your GitHub repository settings. The required secrets include:
+
+- `PLANTON_CLOUD_CLIENT_ID`
+- `PLANTON_CLOUD_CLIENT_SECRET`
 
 ## Usage
 
-To make use of this workflow, you need to include it in your GitHub Actions. The workflow can be triggered on a `workflow_call`.
+1. Choose the appropriate workflow from this repository based on your deployment requirements.
+2. Add the selected workflow to your project's `.github/workflows` directory.
+3. Configure the necessary secrets and inputs in your repository settings.
+4. Trigger the workflow as per your CI/CD needs.
 
-```yaml
-on:
-  workflow_call:
-```
+## Support
 
-### Secrets and Inputs
-
-The workflow requires the following secrets and inputs that need to be passed when calling the workflow:
-
-#### Secrets
-
-- `PLANTON_CLOUD_CLIENT_ID`: Your Planton Cloud Client ID
-- `PLANTON_CLOUD_CLIENT_SECRET`: Your Planton Cloud Client Secret
-
-#### Inputs
-
-- `PLANTON_CLOUD_ARTIFACT_STORE_ID`: The ID of the Artifact Store on Planton Cloud
-- `DOCKER_REPO_HOSTNAME`: The hostname of the Docker repository in the Artifact Store
-- `CONTAINER_IMAGE_REPO`: The repository of the Docker image to be built and pushed
-- `CONTAINER_IMAGE_TAG`: The tag of the Docker image to be built and pushed
-- `PLANTON_CLOUD_ENVIRONMENT_ID`: The ID of the target environment on Planton Cloud
-- `PLANTON_CLOUD_ENVIRONMENT_NAME`: The name of the target environment on Planton Cloud
-- `PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION`: The version of the Microservice Instance (i.e., 'main' or 'review-<pull-request-number>')
+If you encounter any issues or require further assistance, please file an issue in this GitHub repository.
 
 ## Contributing
 

@@ -20,15 +20,6 @@ on:
       CONTAINER_IMAGE_TAG:
         required: true
         type: string
-      PLANTON_CLOUD_ENVIRONMENT_ID:
-        required: true
-        type: string
-      PLANTON_CLOUD_ENVIRONMENT_NAME:
-        required: true
-        type: string
-      PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION:
-        required: true
-        type: string
       NODEJS_VERSION:
         required: false
         type: string
@@ -39,9 +30,8 @@ on:
         default: 3.6.1
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.PLANTON_CLOUD_ENVIRONMENT_ID }}-${{ inputs.PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -49,11 +39,8 @@ jobs:
       - name: Install Planton CLI
         uses: plantoncloud/install-planton-cli-action@main
       
-      - name: Verify Planton CLI Installation
-        run: planton version
-      
       - name: Login to Planton Cloud
-        uses: plantoncloud/gha-planton-cli-login@main
+        uses: plantoncloud/planton-cli-login-action@main
         with:
           planton_cloud_client_id: ${{ secrets.PLANTON_CLOUD_CLIENT_ID }}
           planton_cloud_client_secret: ${{ secrets.PLANTON_CLOUD_CLIENT_SECRET }}
@@ -70,7 +57,7 @@ jobs:
           cache: 'yarn'
 
       # https://github.com/actions/setup-node/issues/325#issuecomment-1120962692
-      - name: Cache node modules
+      - name: Cache Node Modules
         uses: actions/cache@v3
         with:
           path: node_modules
@@ -88,17 +75,15 @@ jobs:
       - name: Build with Make
         run:  make build
 
-      - name: Build & Push Docker Image
-        uses: plantoncloud/gha-build-and-push-docker-image@main
+      - name: GCP Artifact Registry Docker Login
+        uses: plantoncloud/gcp-artifact-registry-docker-login-action@main
         with:
           planton_cloud_artifact_store_id: ${{ inputs.PLANTON_CLOUD_ARTIFACT_STORE_ID }}
           docker_repo_hostname: ${{ inputs.DOCKER_REPO_HOSTNAME }}
-          container_image_repo: ${{ inputs.CONTAINER_IMAGE_REPO }}
-          container_image_tag: ${{ inputs.CONTAINER_IMAGE_TAG }}
 
-      - name: Deploy Microservice
-        uses: plantoncloud/gha-deploy-microservice@main
+      - name: Build & Push Docker Image
+        uses: plantoncloud/build-and-push-docker-image-action@main
         with:
-          planton_cloud_environment_name: ${{ inputs.PLANTON_CLOUD_ENVIRONMENT_NAME }}
-          planton_cloud_microservice_instance_version: ${{ inputs.PLANTON_CLOUD_MICROSERVICE_INSTANCE_VERSION }}
+          docker_repo_hostname: ${{ inputs.DOCKER_REPO_HOSTNAME }}
+          container_image_repo: ${{ inputs.CONTAINER_IMAGE_REPO }}
           container_image_tag: ${{ inputs.CONTAINER_IMAGE_TAG }}
