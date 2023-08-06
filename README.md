@@ -1,8 +1,4 @@
-Certainly. Here's a README for your JavaScript GitHub project, tailored for Node.js projects with Yarn v3 and Buf integrations:
-
----
-
-# Planton Cloud JavaScript CI/CD Workflows
+# GitHub Workflows for Javascript Projects
 
 This repository offers workflow templates tailored for JavaScript projects built with Node.js, leveraging Yarn v3 and Buf, and designed to integrate with various deployment targets via Planton Cloud services.
 
