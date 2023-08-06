@@ -44,6 +44,11 @@ jobs:
           planton_cloud_client_id: ${{ secrets.PLANTON_CLOUD_CLIENT_ID }}
           planton_cloud_client_secret: ${{ secrets.PLANTON_CLOUD_CLIENT_SECRET }}
 
+      - name: Export Buf Token
+        run: |
+          BUF_TOKEN=$(planton get ${{ inputs.PLANTON_CLOUD_ARTIFACT_STORE_ID }} -oyaml | yq e '.spec.bufToken' -)
+          echo "BUF_TOKEN=$BUF_TOKEN" >> $GITHUB_ENV
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -55,11 +60,6 @@ jobs:
           corepack prepare yarn@stable --activate
           yarn --version
         shell: bash
-
-      - name: Export Buf Token
-        run: |
-          BUF_TOKEN=$(planton get ${{ inputs.PLANTON_CLOUD_ARTIFACT_STORE_ID }} -oyaml | yq e '.spec.bufToken' -)
-          echo "BUF_TOKEN=$BUF_TOKEN" >> $GITHUB_ENV
 
       - name: Build with Make
         run:  make build
