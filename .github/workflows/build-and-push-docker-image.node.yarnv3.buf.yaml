@@ -59,6 +59,15 @@ jobs:
           node-version: ${{ inputs.NODEJS_VERSION }}
           cache: 'yarn'
 
+      # https://github.com/actions/setup-node/issues/325#issuecomment-1120962692
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+
       - name: Install Yarn V3
         run: |
           corepack enable
