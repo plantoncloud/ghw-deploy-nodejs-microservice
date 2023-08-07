@@ -43,7 +43,7 @@ And similarly for `deploy-microservice.node.yarnv3.buf.yaml`:
 
 Ensure you've set up the necessary secrets in your GitHub repository settings. The required secrets include:
 
-- `PLANTON_CLOUD_CLIENT_ID`
+- `PLANTON_CLOUD_CLIENT_EMAIL`
 - `PLANTON_CLOUD_CLIENT_SECRET`
 
 ## Usage
