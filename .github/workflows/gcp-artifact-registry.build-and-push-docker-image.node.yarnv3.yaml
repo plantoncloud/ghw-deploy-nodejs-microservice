@@ -54,7 +54,7 @@ jobs:
         with:
           node-version: ${{ inputs.NODEJS_VERSION }}
           cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock' # https://stackoverflow.com/a/69375844/18082572
+          cache-dependency-path: '${{ inputs.BUILD_DIRECTORY }}/yarn.lock'
 
       # https://github.com/actions/setup-node/issues/325#issuecomment-1120962692
       - name: Cache Node Modules
