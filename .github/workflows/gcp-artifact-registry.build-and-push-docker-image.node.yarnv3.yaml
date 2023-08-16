@@ -28,6 +28,10 @@ on:
         required: false
         type: string
         default: 3.6.1
+      BUILD_DIRECTORY:
+        required: false
+        type: string
+        default: .
 
 jobs:
   build-and-push:
@@ -50,12 +54,13 @@ jobs:
         with:
           node-version: ${{ inputs.NODEJS_VERSION }}
           cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock' # https://stackoverflow.com/a/69375844/18082572
 
       # https://github.com/actions/setup-node/issues/325#issuecomment-1120962692
       - name: Cache Node Modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: ${{ inputs.BUILD_DIRECTORY }}/node_modules
           key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.OS }}-node-
@@ -66,6 +71,7 @@ jobs:
           corepack prepare yarn@${{ inputs.YARN_VERSION }} --activate
           yarn --version
         shell: bash
+        working-directory: ${{ inputs.BUILD_DIRECTORY }}
 
       - name: Build with Make
         run:  make build
